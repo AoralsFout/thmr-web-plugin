@@ -1,8 +1,13 @@
-/**
- * ThmrWebPlugin 插件
- * @author AoralsFout
- * @description 东方音乐电台(Touhou Music Raaio)浏览器音乐播放器加载脚本。
- * @version 0.0.1
-*/
+// 插件内联 CSS
+import "./style.css";
 
-console.log("ThmrWebPlugin 加载成功🎉");
+const init = () => {
+  const widget = document.createElement("div");
+  widget.classList.add("thmr-container");
+  widget.innerHTML = `
+<span>hello thmr-web-plugin!</span>
+  `;
+  document.body.appendChild(widget);
+};
+
+init();

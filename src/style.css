@@ -1,0 +1,12 @@
+.thmr-container {
+  position: fixed;
+  bottom: 100px;
+  right: 0;
+  width: 500px;
+  height: 300px;
+  z-index: 9999;
+  border-radius: 10px 0px 0px 10px;
+  border: 1px solid #ccc;
+  border-right: none;
+  background-color: rgb(255, 255, 255);
+}
