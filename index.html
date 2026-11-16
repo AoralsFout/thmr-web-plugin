@@ -1,2 +1,47 @@
-<!-- 可以用 npm run dev 调试 -->
-<script type="module" src="/src/main.ts"></script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>THMR Web Plugin</title>
+    <script type="module" src="/src/main.ts"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .background {
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(
+          -45deg,
+          #56c1ff 0%,
+          #8be7a2 50%,
+          #ff9900 100%
+        );
+      }
+      .sticky-area {
+        position: fixed;
+        width: calc(100vw - 80px);
+        height: calc(100vh - 80px);
+        margin-left: 40px;
+        margin-top: 40px;
+        border: 1px dashed #ff0000;
+      }
+      .text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 100px;
+        font-family: "Source Han Serif SC", serif;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sticky-area"></div>
+    <div class="background"></div>
+    <div class="text">东方音乐电台</div>
+  </body>
+</html>

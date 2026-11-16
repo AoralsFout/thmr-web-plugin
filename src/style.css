@@ -1,12 +1,272 @@
 .thmr-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
   position: fixed;
   bottom: 100px;
   right: 0;
-  width: 500px;
-  height: 300px;
+  width: 364px;
+  padding: 10px;
   z-index: 9999;
-  border-radius: 10px 0px 0px 10px;
-  border: 1px solid #ccc;
-  border-right: none;
-  background-color: rgb(255, 255, 255);
+  overflow: hidden;
+  border-radius: 12px 12px 12px 12px;
+  background-color: rgba(198, 90, 105, 0.3);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-family: "Source Han Serif SC", serif;
+  /* 边框 */
+  &::before {
+    content: "";
+    position: absolute;
+    box-sizing: border-box;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    border-radius: inherit;
+    /* 边框宽度 */
+    padding: 1px;
+    background-clip: border-box;
+    background-image: linear-gradient(
+      calc(var(--angle) - 90deg),
+      rgb(255, 255, 255) 0%,
+      rgb(255, 255, 255) 20%,
+      rgba(0, 0, 0, 0) 80%
+    );
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  /* 泛光 */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(calc(var(--angle) + 90deg));
+    min-width: 110%;
+    min-height: 110%;
+    aspect-ratio: 1 / 1;
+    background-image: linear-gradient(
+      rgb(251, 242, 244, 0.3) 0%,
+      rgb(251, 242, 244, 0.3) 30%,
+      rgba(0, 0, 0, 0) 51%
+    );
+    pointer-events: none;
+    z-index: 10000;
+  }
+  transition:
+    backdrop-filter 0.2s ease-in-out,
+    transform 0.1s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  &:hover {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  }
+  &:active {
+    transform: scale(0.99);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.thmr-cover {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+  overflow: hidden;
+}
+
+.thmr-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.thmr-content {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.thmr-title {
+  font-size: 16px;
+  font-weight: bold;
+  /* 不换行 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.thmr-subtitle {
+  font-size: 14px;
+}
+
+.thmr-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.thmr-controls-play {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: rgb(198, 90, 105);
+  color: #fff;
+  cursor: pointer;
+}
+
+.thmr-controls-volume {
+  width: 100%;
+  height: 32px;
+  display: flex;
+  gap: 5px;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+  flex-shrink: 0;
+}
+
+.thmr-controls-volume-icon {
+  width: 16px;
+  height: 16px;
+  padding: 4px;
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.thmr-controls-volume-prog {
+  width: 100%;
+  height: 6px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > .thmr-controls-volume-prog-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    flex-shrink: 0;
+    background-color: #ffffff21;
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  > .thmr-controls-volume-prog-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--progress);
+    height: 100%;
+    border-radius: 3px 0 0 3px;
+    display: flex;
+    flex-shrink: 0;
+    background-color: rgb(198, 90, 105);
+    z-index: 2;
+    cursor: pointer;
+  }
+
+  > .thmr-controls-volume-prog-dot {
+    position: absolute;
+    top: -5px;
+    left: calc(var(--progress) - 6px);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    flex-shrink: 0;
+    z-index: 2;
+
+    background:
+      radial-gradient(
+        circle 2px at 50% 25%,
+        rgb(198, 90, 105) 96%,
+        transparent 100%
+      ),
+      radial-gradient(
+        circle 2px at 50% 75%,
+        rgb(255, 255, 255) 96%,
+        transparent 100%
+      ),
+      radial-gradient(
+        circle closest-side at 50% 25%,
+        rgb(255, 255, 255) 99%,
+        transparent 100%
+      ),
+      radial-gradient(
+        circle closest-side at 50% 75%,
+        rgb(198, 90, 105) 99%,
+        transparent 100%
+      ),
+      linear-gradient(90deg, rgb(198, 90, 105) 50%, rgb(255, 255, 255) 50%);
+    cursor: pointer;
+  }
+}
+
+.thmr-controls-volume-value {
+  font-size: 14px;
+}
+
+.thmr-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.thmr-background-img {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  transform: rotateY(180deg);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 1),
+    rgba(0, 0, 0, 0)
+  );
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: cover;
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+  mask-repeat: no-repeat;
+  mask-size: cover;
+}
+
+#thmr-dev {
+  background-color: rgb(0, 0, 0);
+  padding: 5px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
 }
