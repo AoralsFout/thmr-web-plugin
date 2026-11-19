@@ -27,6 +27,7 @@ export const html: string = `
             </div>
         </div>
     </div>
+    <audio nocontrols id="thmr-radio"></audio>
 </div>
 <div id="thmr-dev">
     <div id="thmr-dev-current"></div>
