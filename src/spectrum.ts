@@ -33,7 +33,7 @@ const draw = () => {
   }
   analyser.getByteFrequencyData(dataArray);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = 0.1;
+  ctx.globalAlpha = 0.5;
 
   let xf = canvas.width / 2 + barWidth / 2 + barGap / 2;
   let xb = canvas.width / 2 - barWidth / 2 - barGap / 2;
@@ -42,7 +42,16 @@ const draw = () => {
     // 取值 0-255
     const normal = dataArray[i] / 255;
     const barHeight = (canvas.height * normal) / 3;
-    ctx.fillStyle = `rgb(255,0,0)`;
+    const grad = ctx.createLinearGradient(
+      0,
+      canvas.height,
+      0,
+      canvas.height - barHeight,
+    );
+    grad.addColorStop(0, "rgba(255,0,0,1)");
+    grad.addColorStop(0.2, "rgba(255,0,0,1)");
+    grad.addColorStop(1, "rgba(255,0,0,0)");
+    ctx.fillStyle = grad;
     ctx.fillRect(xf, canvas.height - barHeight, barWidth, barHeight);
     ctx.fillRect(xb, canvas.height - barHeight, barWidth, barHeight);
     xf += barWidth + barGap;

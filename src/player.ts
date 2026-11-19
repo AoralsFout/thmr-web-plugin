@@ -5,6 +5,7 @@
 import { Spectrum } from "./spectrum";
 
 let audioEl: HTMLAudioElement | null;
+
 const init = () => {
   audioEl = document.getElementById("thmr-radio") as HTMLAudioElement;
   const playIconEl = document.getElementById("thmr-controls-play-icon");
