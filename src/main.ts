@@ -1,5 +1,5 @@
 // 插件内联 CSS
-import "./style.css";
+import "./styles/style.css";
 // 字体
 import "@fontpkg/source-han-serif-sc/SourceHanSerifSC-Regular.otf";
 
@@ -12,6 +12,7 @@ const init = () => {
   widget.innerHTML = html;
   document.body.appendChild(widget);
   Stations.init();
+  Player.init();
 };
 
 const maxRadius = 12;
@@ -174,16 +175,28 @@ const applyHighlight = () => {
   requestAnimationFrame(applyHighlight);
 };
 
-const bindPlayer = () => {
+const bindPlayerActions = () => {
   const playButtonEl = document.getElementById("thmr-controls-play");
-  playButtonEl?.addEventListener("click", () => {
-    Player.playing() ? Player.pause() : Player.play();
-  })
   const volumeButtonEl = document.getElementById("thmr-controls-volume-icon");
-  volumeButtonEl?.addEventListener("click",()=>{
-    Player.volume
-  })
-}
+  if (!playButtonEl || !volumeButtonEl) return;
+  playButtonEl.addEventListener("click", (e) => {
+    e.preventDefault();
+    Player.playing() ? Player.pause() : Player.play();
+  });
+  volumeButtonEl.addEventListener("click", (e) => {
+    e.preventDefault();
+    Player.volume() == 0 ? Player.unmute() : Player.mute();
+  });
+  volumeButtonEl.addEventListener("wheel", (e: WheelEvent) => {
+    e.preventDefault();
+    const step = 5;
+    if (e.deltaY > 0) {
+      Player.volume(Player.volume() + step);
+    } else {
+      Player.volume(Player.volume() - step);
+    }
+  });
+};
 
 window.addEventListener("DOMContentLoaded", () => {
   init();
@@ -211,5 +224,5 @@ window.addEventListener("DOMContentLoaded", () => {
   });
   window.addEventListener("mousemove", highlight);
   applyHighlight();
-  bindPlayer();
+  bindPlayerActions();
 });
