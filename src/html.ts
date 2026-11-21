@@ -26,14 +26,10 @@ export const html: string = `
                     <div class="thmr-controls-volume-prog-bar" id="thmr-controls-volume-prog-bar"></div>
                     <div class="thmr-controls-volume-prog-dot" id="thmr-controls-volume-prog-dot"></div>
                 </div>
-                <div class="thmr-controls-volume-value" id="thmr-controls-volume-value">100%</div>
+                <div class="thmr-controls-volume-value" id="thmr-controls-volume-value">100</div>
             </div>
         </div>
     </div>
     <audio nocontrols id="thmr-radio"></audio>
-</div>
-<div id="thmr-dev">
-    <div id="thmr-dev-current"></div>
-    <div id="thmr-dev-target"></div>
 </div>
 `;

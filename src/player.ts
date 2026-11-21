@@ -25,8 +25,11 @@ const init = () => {
     });
     audioEl.addEventListener("volumechange", () => {
       if (!volumeProg || !audioEl || !volumeProgValue) return;
-      volumeProg.style.setProperty("--progress", `${audioEl.volume * 100}%`);
-      volumeProgValue.textContent = `${audioEl.volume * 100}%`;
+      volumeProg.style.setProperty(
+        "--progress",
+        `${(audioEl.volume * 100).toFixed(0)}%`,
+      );
+      volumeProgValue.textContent = `${(audioEl.volume * 100).toFixed(0)}`;
     });
     audioEl.volume = 1;
     audioEl.crossOrigin = "anonymous";

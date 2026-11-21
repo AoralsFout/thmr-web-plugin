@@ -29,7 +29,7 @@ const dragHandler = (e: MouseEvent) => {
   if (rect.left + dx < -1) return;
   if (rect.top + dy < -1) return;
   if (rect.left + dx > window.innerWidth - rect.width) return;
-  if (rect.top + dy > window.innerHeight - rect.height + 1) return;
+  if (rect.top + dy > window.innerHeight - rect.height) return;
   // 融边处理
   let raduis = [maxRadius, maxRadius, maxRadius, maxRadius];
   if (rect.left + dx < maxRadius) {
@@ -90,7 +90,7 @@ const autoSticky = () => {
   setTimeout(() => {
     if (!thmrContainerEl) return;
     if (toTop <= threshold && toTop <= toRight && toTop <= toLeft) {
-      thmrContainerEl.style.bottom = `${window.innerHeight - rect.height + 1}px`;
+      thmrContainerEl.style.bottom = `${window.innerHeight - rect.height}px`;
       thmrContainerEl.style.borderRadius = `0px 0px ${maxRadius}px ${maxRadius}px`;
     } else if (
       toBottom <= threshold &&
@@ -100,7 +100,7 @@ const autoSticky = () => {
       thmrContainerEl.style.bottom = `-1px`;
       thmrContainerEl.style.borderRadius = `${maxRadius}px ${maxRadius}px 0px 0px`;
     } else if (toLeft <= threshold && toLeft <= toBottom && toLeft <= toTop) {
-      thmrContainerEl.style.right = `${window.innerWidth - rect.width + 1}px`;
+      thmrContainerEl.style.right = `${window.innerWidth - rect.width}px`;
       thmrContainerEl.style.borderRadius = `0px ${maxRadius}px ${maxRadius}px 0px`;
     } else if (
       toRight <= threshold &&
@@ -130,50 +130,6 @@ const autoSticky = () => {
   );
 };
 
-let highlightAngle: number = 0;
-
-// 边框高光
-const highlight = (e: MouseEvent) => {
-  if (!thmrContainerEl) return;
-  const rect = thmrContainerEl.getBoundingClientRect();
-  // 计算鼠标到组件中心角度
-  highlightAngle =
-    Math.atan2(
-      e.clientY - rect.top - rect.height / 2,
-      e.clientX - rect.left - rect.width / 2,
-    ) *
-    (180 / Math.PI);
-};
-
-// 缓慢向目标角度过渡
-const applyHighlight = () => {
-  if (!thmrContainerEl) return;
-  const step = 0.05;
-  let current = Number(
-    thmrContainerEl.style.getPropertyValue("--angle").replace("deg", ""),
-  );
-  const target = highlightAngle;
-  // 最短旋转路径
-  const diff = ((target - current + 540) % 360) - 180;
-
-  // 距离小于步长时吸附到目标，防止抖动
-  if (Math.abs(diff) <= step) {
-    current = target;
-  } else {
-    current += Math.sign(diff) * step;
-  }
-
-  // 归一化
-  current = ((current + 540) % 360) - 180;
-
-  const currentEl = document.getElementById("thmr-dev-current") as HTMLElement;
-  currentEl.textContent = `高光角度：${current.toFixed(2)}°`;
-  const targetEl = document.getElementById("thmr-dev-target") as HTMLElement;
-  targetEl.textContent = `目标高光角度：${target.toFixed(2)}°`;
-
-  thmrContainerEl.style.setProperty("--angle", `${current}deg`);
-  requestAnimationFrame(applyHighlight);
-};
 
 const bindPlayerActions = () => {
   const playButtonEl = document.getElementById("thmr-controls-play");
@@ -198,6 +154,8 @@ const bindPlayerActions = () => {
   });
 };
 
+let dragging = false;
+
 window.addEventListener("DOMContentLoaded", () => {
   init();
   thmrContainerEl = document.getElementById("thmr-container") as HTMLElement;
@@ -208,6 +166,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   thmrContainerEl.addEventListener("mousemove", (e) => {
     e.preventDefault();
+    if (dragging) return;
     dragHandler(e);
   });
 
@@ -222,7 +181,43 @@ window.addEventListener("DOMContentLoaded", () => {
     isDragging = false;
     autoSticky();
   });
-  window.addEventListener("mousemove", highlight);
-  applyHighlight();
   bindPlayerActions();
+
+  const audioEl = document.getElementById("thmr-radio") as HTMLAudioElement;
+  const volumeProg = document.getElementById("thmr-controls-volume-prog");
+
+  if (volumeProg) {
+    volumeProg.addEventListener("mousedown", (e: MouseEvent) => {
+      e.preventDefault();
+      dragging = true;
+      const x = e.clientX;
+      const rect = volumeProg.getBoundingClientRect();
+      let progress = (x - rect.left) / rect.width;
+      if (progress > 1) {
+        progress = 1;
+      }
+      if (progress < 0) {
+        progress = 0;
+      }
+      audioEl.volume = progress;
+    });
+    window.addEventListener("mousemove", (e: MouseEvent) => {
+      if (!dragging || !audioEl) return;
+      e.preventDefault();
+      const x = e.clientX;
+      const rect = volumeProg.getBoundingClientRect();
+      let progress = (x - rect.left) / rect.width;
+      if (progress > 1) {
+        progress = 1;
+      }
+      if (progress < 0) {
+        progress = 0;
+      }
+      audioEl.volume = progress;
+    });
+    window.addEventListener("mouseup", (e: MouseEvent) => {
+      e.preventDefault();
+      dragging = false;
+    });
+  }
 });
