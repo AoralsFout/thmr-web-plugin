@@ -1,10 +1,34 @@
+import { execSync } from "node:child_process";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
+import pkg from "./package.json" with { type: "json" };
+
+const getGitInfo = () => {
+    try {
+        return {
+            shortHash: execSync("git rev-parse --short HEAD").toString().trim(),
+            branch: execSync("git rev-parse --abbrev-ref HEAD")
+                .toString()
+                .trim(),
+        };
+    } catch {
+        return { shortHash: "unknown", branch: "unknown" };
+    }
+};
+
+const gitInfo = getGitInfo();
+
 export default defineConfig({
     // CSS 注入插件
     plugins: [cssInjectedByJsPlugin()],
+    // 版本注入
+    define: {
+        __APP_VERSION__: JSON.stringify(pkg.version),
+        __GIT_COMMIT__: JSON.stringify(gitInfo.shortHash),
+        __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    },
     build: {
         lib: {
             entry: resolve(import.meta.dirname, "src/main.ts"),

@@ -8,7 +8,7 @@ import { Stations } from "./stations";
 import { Player } from "./player";
 import { Settings } from "./session";
 
-const version = "THMR-web-plugin v0.0.1";
+const version = `THMR-web-plugin-${__APP_VERSION__}-${__GIT_COMMIT__}`;
 
 const initDOM = async () => {
     const widget = document.createElement("div");
