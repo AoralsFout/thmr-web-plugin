@@ -2,6 +2,7 @@
  * 这个文件专门负责播放控制和播放控制组件状态切换
  */
 
+import { Settings } from "./session";
 import { Spectrum } from "./spectrum";
 
 let audioEl: HTMLAudioElement | null;
@@ -30,6 +31,7 @@ const init = () => {
         `${(audioEl.volume * 100).toFixed(0)}%`,
       );
       volumeProgValue.textContent = `${(audioEl.volume * 100).toFixed(0)}`;
+      Settings.setSettings("volume", audioEl.volume.toString());
     });
     audioEl.volume = 1;
     audioEl.crossOrigin = "anonymous";

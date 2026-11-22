@@ -6,6 +6,9 @@ import "@fontpkg/source-han-serif-sc/SourceHanSerifSC-Regular.otf";
 import { html } from "./html";
 import { Stations } from "./stations";
 import { Player } from "./player";
+import { Settings } from "./session";
+
+const version = "THMR-web-plugin v0.0.1";
 
 const init = () => {
   const widget = document.createElement("div");
@@ -130,7 +133,6 @@ const autoSticky = () => {
   );
 };
 
-
 const bindPlayerActions = () => {
   const playButtonEl = document.getElementById("thmr-controls-play");
   const volumeButtonEl = document.getElementById("thmr-controls-volume-icon");
@@ -145,19 +147,44 @@ const bindPlayerActions = () => {
   });
   volumeButtonEl.addEventListener("wheel", (e: WheelEvent) => {
     e.preventDefault();
-    const step = 5;
+    const step = 0.05;
     if (e.deltaY > 0) {
-      Player.volume(Player.volume() + step);
-    } else {
       Player.volume(Player.volume() - step);
+    } else {
+      Player.volume(Player.volume() + step);
     }
   });
 };
 
 let dragging = false;
 
+const openSettings = () => {
+  const mainEl = document.getElementById("thmr-main");
+  const settingsEl = document.getElementById("thmr-settings");
+  if (!mainEl || !settingsEl) return;
+  mainEl.classList.remove("thmr-main-in");
+  mainEl.classList.remove("thmr-main-out");
+  mainEl.classList.add("thmr-main-out");
+  settingsEl.classList.remove("thmr-settings-in");
+  settingsEl.classList.remove("thmr-settings-out");
+  settingsEl.classList.add("thmr-settings-in");
+};
+
+const closeSettings = () => {
+  const mainEl = document.getElementById("thmr-main");
+  const settingsEl = document.getElementById("thmr-settings");
+  if (!mainEl || !settingsEl) return;
+  mainEl.classList.remove("thmr-main-in");
+  mainEl.classList.remove("thmr-main-out");
+  mainEl.classList.add("thmr-main-in");
+  settingsEl.classList.remove("thmr-settings-in");
+  settingsEl.classList.remove("thmr-settings-out");
+  settingsEl.classList.add("thmr-settings-out");
+};
+
 window.addEventListener("DOMContentLoaded", () => {
   init();
+  Settings.init();
   thmrContainerEl = document.getElementById("thmr-container") as HTMLElement;
   thmrContainerEl.addEventListener("mousedown", (e) => {
     e.preventDefault();
@@ -220,4 +247,16 @@ window.addEventListener("DOMContentLoaded", () => {
       dragging = false;
     });
   }
+
+  const openSettingsEl = document.getElementById("thmr-settings-btn");
+  const closeSettingsEl = document.getElementById("thmr-settings-close");
+  if (openSettingsEl) {
+    openSettingsEl.addEventListener("click", openSettings);
+  }
+  if (closeSettingsEl) {
+    closeSettingsEl.addEventListener("click", closeSettings);
+  }
+
+  const versionEl = document.getElementById("thmr-version") as HTMLElement;
+  versionEl.textContent = version;
 });
