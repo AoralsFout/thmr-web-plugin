@@ -38,6 +38,18 @@ export const html: string = `
         </div>
         <div class="thmr-settings-sections" id="thmr-settings-sections">
             <div class="thmr-settings-section">
+                <div class="thmr-settings-section-title">频道</div>
+                <div class="thmr-settings-slide" id="thmr-settings-stations">
+                    <div class="thmr-settings-slide-option-bg"></div>
+                </div>
+            </div>
+            <div class="thmr-settings-section">
+                <div class="thmr-settings-section-title">码率</div>
+                <div class="thmr-settings-slide" id="thmr-settings-profiles">
+                    <div class="thmr-settings-slide-option-bg"></div>
+                </div>
+            </div>
+            <div class="thmr-settings-section">
                 <div class="thmr-settings-section-title">主题</div>
                 <div class="thmr-settings-slide">
                     <div class="thmr-settings-slide-option" id="thmr-settings-theme-light" key="theme" value="light">亮</div>

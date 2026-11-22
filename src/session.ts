@@ -4,6 +4,7 @@
 
 import { Player } from "./player";
 import { Spectrum } from "./spectrum";
+import { Stations } from "./stations";
 
 let theme: "light" | "dark" | null = null;
 let style: "glass" | "solid" | null = null;
@@ -31,6 +32,8 @@ const init = () => {
   setSettings("style", style);
   setSettings("volume", volume.toString());
   setSettings("reduceMotion", reduceMotion.toString());
+  setSettings("station", Player.getCurrentStationId());
+  setSettings("profile", Player.getCurrentProfileId());
 
   // 监听系统设置变化
   window
@@ -53,13 +56,29 @@ const init = () => {
     document.getElementById("thmr-settings-reduceMotion-false"),
   ];
 
+  Stations.getStations().forEach((station) => {
+    Options.push(
+      document.getElementById(`thmr-settings-station-${station.id}`),
+    );
+  });
+
+  Stations.getProfiles().forEach((profile) => {
+    Options.push(
+      document.getElementById(`thmr-settings-profile-${profile.id}`),
+    );
+  });
+
+  console.log(Options);
+
   Options.forEach((item) => {
     item?.addEventListener("click", () => {
       const key = item.getAttribute("key") as
         | "theme"
         | "volume"
         | "style"
-        | "reduceMotion";
+        | "reduceMotion"
+        | "station"
+        | "profile";
       const value = item.getAttribute("value") as string;
       setSettings(key, value);
     });
@@ -82,7 +101,7 @@ const getSettings = (query: "theme" | "volume" | "style" | "reduceMotion") => {
 };
 
 const setSettings = (
-  key: "theme" | "volume" | "style" | "reduceMotion",
+  key: "theme" | "volume" | "style" | "reduceMotion" | "station" | "profile",
   value: string,
 ) => {
   const themeLightOption = document.getElementById("thmr-settings-theme-light");
@@ -95,6 +114,7 @@ const setSettings = (
   const reduceMotionFlaseOption = document.getElementById(
     "thmr-settings-reduceMotion-false",
   );
+  console.log(key, value);
   switch (key) {
     case "theme":
       if (value !== "light" && value !== "dark") {
@@ -141,6 +161,78 @@ const setSettings = (
       volume = Number(value);
       localStorage.setItem("volume", volume.toString());
       Player.volume(volume);
+      break;
+    case "station":
+      if (!Stations.getStations().find((item) => item.id == value)) {
+        value = Stations.getStations()[0].id;
+      }
+      if (value !== Player.getCurrentStationId()) {
+        const profileSettingsEl = document.getElementById(
+          "thmr-settings-profiles",
+        );
+        // 删除旧组件
+        Stations.getProfiles().forEach((profile) => {
+          document
+            .getElementById(`thmr-settings-profile-${profile.id}`)
+            ?.remove();
+        });
+        // 增加新组件
+        const newProfile = Stations.getStations().find(
+          (item) => item.id == value,
+        )?.bitrates;
+        newProfile?.forEach((bitrate) => {
+          const options = document.createElement("div");
+          options.classList.add("thmr-settings-slide-option");
+          options.id = `thmr-settings-profile-${bitrate.id}`;
+          options.innerHTML = bitrate.id;
+          options.addEventListener("click", () => {
+            setSettings("profile", bitrate.id);
+          });
+          profileSettingsEl?.appendChild(options);
+        });
+        // 优先使用旧码率，如果没有再用第一个
+        const newProfileId =
+          newProfile?.find(
+            (profile) => profile.id === Player.getCurrentProfileId(),
+          )?.id || newProfile![0].id;
+        Player.changeSource(value, newProfileId);
+        // 重新应用选中状态
+        newProfile?.forEach((profile) => {
+          const option = document.getElementById(
+            `thmr-settings-profile-${profile.id}`,
+          );
+          option?.classList.remove("active");
+          if (newProfileId === profile.id) {
+            option?.classList.add("active");
+          }
+        });
+      }
+      Stations.getStations().forEach((station) => {
+        const option = document.getElementById(
+          `thmr-settings-station-${station.id}`,
+        );
+        option?.classList.remove("active");
+        if (value === station.id) {
+          option?.classList.add("active");
+        }
+      });
+      break;
+    case "profile":
+      if (!Stations.getProfiles().find((item) => item.id == value)) {
+        value = Stations.getProfiles()[0].id;
+      }
+      if (value !== Player.getCurrentProfileId()) {
+        Player.changeSource(Player.getCurrentStationId(), value);
+      }
+      Stations.getProfiles().forEach((profile) => {
+        const option = document.getElementById(
+          `thmr-settings-profile-${profile.id}`,
+        );
+        option?.classList.remove("active");
+        if (value === profile.id) {
+          option?.classList.add("active");
+        }
+      });
       break;
     default:
       break;

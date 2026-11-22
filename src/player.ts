@@ -4,8 +4,19 @@
 
 import { Settings } from "./session";
 import { Spectrum } from "./spectrum";
+import { Stations } from "./stations";
 
 let audioEl: HTMLAudioElement | null;
+let currentStationId: string = "";
+let currentProfileId: string = "";
+
+const getCurrentProfileId = () => {
+  return currentProfileId;
+};
+
+const getCurrentStationId = () => {
+  return currentStationId;
+};
 
 const init = () => {
   audioEl = document.getElementById("thmr-radio") as HTMLAudioElement;
@@ -78,11 +89,15 @@ const unmute = () => {
   audioEl.volume = lastVolume;
 };
 
-const changeSource = (s: string) => {
+const changeSource = (station: string, profile: string) => {
   if (!audioEl) return;
   try {
-    audioEl.src = s;
-    console.log("源已改变");
+    console.log(station, profile);
+    audioEl.src = `https://radio.yunmoan.cn/live/${station}/${profile}`;
+    currentStationId = station;
+    currentProfileId = profile;
+    audioEl.play();
+    Stations.refreshStationStatus();
   } catch (error) {
     console.error("illegal arguments!");
   }
@@ -98,4 +113,6 @@ export const Player = {
   mute,
   unmute,
   changeSource,
+  getCurrentProfileId,
+  getCurrentStationId,
 };

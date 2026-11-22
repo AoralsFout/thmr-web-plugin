@@ -10,12 +10,10 @@ import { Settings } from "./session";
 
 const version = "THMR-web-plugin v0.0.1";
 
-const init = () => {
+const initDOM = async () => {
   const widget = document.createElement("div");
   widget.innerHTML = html;
   document.body.appendChild(widget);
-  Stations.init();
-  Player.init();
 };
 
 const maxRadius = 12;
@@ -182,9 +180,8 @@ const closeSettings = () => {
   settingsEl.classList.add("thmr-settings-out");
 };
 
-window.addEventListener("DOMContentLoaded", () => {
-  init();
-  Settings.init();
+window.addEventListener("DOMContentLoaded", async () => {
+  initDOM();
   thmrContainerEl = document.getElementById("thmr-container") as HTMLElement;
   thmrContainerEl.addEventListener("mousedown", (e) => {
     e.preventDefault();
@@ -259,4 +256,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const versionEl = document.getElementById("thmr-version") as HTMLElement;
   versionEl.textContent = version;
+
+  Player.init();
+  await Stations.init();
+  Settings.init();
 });
